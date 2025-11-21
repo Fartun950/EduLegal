@@ -1,0 +1,541 @@
+### EduLegal Backend API Tests
+### REST Client file for VS Code / Cursor
+### Base URL Configuration
+@baseUrl = http://localhost:5000/api
+@token = your_jwt_token_here
+
+#################################################################
+### HEALTH CHECK
+#################################################################
+
+### Health Check
+# Public endpoint - no authentication required
+# Returns server status and timestamp
+GET {{baseUrl}}/health
+Content-Type: application/json
+
+#################################################################
+### AUTHENTICATION
+#################################################################
+
+### Register New User
+# Public endpoint - no authentication required
+# All users default to 'guest' role
+# Returns user data and JWT token
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+###
+
+### Register Another User (Student)
+# Example: Student registration
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com",
+  "password": "securepass456"
+}
+
+###
+
+### Register Staff User
+# Example: Staff registration (also defaults to guest role)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Staff Member",
+  "email": "staff@example.com",
+  "password": "staffpass789"
+}
+
+###
+
+### Login User
+# Public endpoint - no authentication required
+# Returns user data and JWT token for authenticated requests
+# Copy the token from response and use it in {{token}} variable above
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+###
+
+### Login Admin User (if admin exists)
+# Replace with actual admin credentials
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "adminpass123"
+}
+
+###
+
+### Login Legal Officer (if officer exists)
+# Replace with actual legal officer credentials
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "officer@example.com",
+  "password": "officerpass123"
+}
+
+###
+
+### Get Current User Profile
+# Protected endpoint - requires authentication
+# Returns information about currently authenticated user
+GET {{baseUrl}}/auth/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+#################################################################
+### CASES - CATEGORIES
+#################################################################
+
+### Get All Available Categories
+# Public endpoint - no authentication required
+# Returns all case categories including staff-related ones
+GET {{baseUrl}}/cases/categories
+Content-Type: application/json
+
+#################################################################
+### CASES - CREATE (Any Authenticated User)
+#################################################################
+
+### Create New Case (Guest User)
+# Protected endpoint - requires authentication (any role)
+# Guest users can create cases with any category
+# Defaults: status='open', priority='medium'
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Harassment Complaint",
+  "description": "I am experiencing harassment from a fellow student. This has been ongoing for several weeks and I need help resolving this issue.",
+  "category": "harassment",
+  "priority": "high"
+}
+
+###
+
+### Create Case - Academic Issue
+# Example: Grade appeal or academic dispute
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Grade Appeal Request",
+  "description": "I believe my grade was calculated incorrectly for the final exam. I would like to request a review of my exam paper.",
+  "category": "gradeAppeal",
+  "priority": "medium"
+}
+
+###
+
+### Create Case - Bullying
+# Example: Bullying complaint
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Bullying Incident Report",
+  "description": "I have been subjected to repeated bullying incidents in the cafeteria. The situation has escalated and I fear for my safety.",
+  "category": "bullying",
+  "priority": "high"
+}
+
+###
+
+### Create Case - Discrimination
+# Example: Discrimination complaint
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Discrimination Complaint",
+  "description": "I believe I was discriminated against based on my background during the admission process.",
+  "category": "discrimination",
+  "priority": "high"
+}
+
+###
+
+### Create Case - Workplace Harassment (Staff)
+# Example: Staff member reporting workplace harassment
+# Guest users (including staff) can submit staff-related cases
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Workplace Harassment Report",
+  "description": "I am experiencing harassment from my supervisor. This includes inappropriate comments and behavior that makes me uncomfortable.",
+  "category": "workplaceHarassment",
+  "priority": "high"
+}
+
+###
+
+### Create Case - Sexual Harassment (Staff)
+# Example: Staff sexual harassment complaint
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Sexual Harassment Complaint",
+  "description": "I have been a victim of sexual harassment in the workplace. This needs immediate attention and investigation.",
+  "category": "sexualHarassment",
+  "priority": "high"
+}
+
+###
+
+### Create Case - Staff Misconduct
+# Example: Staff misconduct report
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Staff Misconduct Report",
+  "description": "I witnessed misconduct by a staff member that violates institutional policies.",
+  "category": "staffMisconduct",
+  "priority": "medium"
+}
+
+###
+
+### Create Case - Fraud/Corruption
+# Example: Fraud or corruption report
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Fraud Investigation Request",
+  "description": "I have evidence of fraudulent activities that need to be investigated by the legal office.",
+  "category": "fraudCorruption",
+  "priority": "high"
+}
+
+###
+
+### Create Case - Abuse of Power
+# Example: Abuse of power complaint
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Abuse of Power Complaint",
+  "description": "A staff member is abusing their position of authority to unfairly target me.",
+  "category": "abuseOfPower",
+  "priority": "high"
+}
+
+###
+
+### Create Case - Legal Matter
+# Example: Legal category case
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Legal Consultation Needed",
+  "description": "I need legal consultation regarding a contract matter with the institution.",
+  "category": "legal",
+  "priority": "medium"
+}
+
+###
+
+### Create Case - Low Priority Example
+# Example: Low priority case
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "General Inquiry",
+  "description": "I have a general question about institutional policies.",
+  "category": "other",
+  "priority": "low"
+}
+
+#################################################################
+### CASES - VIEW/MANAGE (Admin/Legal Officer Only)
+#################################################################
+
+### Get All Cases
+# Protected endpoint - requires admin or legalOfficer role
+# Guest users cannot view cases list
+# Optional query parameters: ?category=harassment&status=open&assignedTo=userId
+GET {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Get All Cases - Filter by Category
+# Filter cases by category
+GET {{baseUrl}}/cases?category=harassment
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Get All Cases - Filter by Status
+# Filter cases by status (open, inProgress, closed)
+GET {{baseUrl}}/cases?status=open
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Get All Cases - Filter by Assigned Officer
+# Filter cases by assigned legal officer
+# Replace userId with actual user ID
+GET {{baseUrl}}/cases?assignedTo=507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Get All Cases - Multiple Filters
+# Combine multiple filters
+GET {{baseUrl}}/cases?category=harassment&status=open&assignedTo=507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Get Case by ID
+# Protected endpoint - requires admin or legalOfficer role
+# Guest users cannot view individual cases
+# Replace caseId with actual case ID from previous responses
+GET {{baseUrl}}/cases/507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Update Case
+# Protected endpoint - requires admin or legalOfficer role
+# Guest users cannot update cases
+# All fields are optional - only provided fields will be updated
+# Replace caseId with actual case ID
+PUT {{baseUrl}}/cases/507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "inProgress",
+  "priority": "high",
+  "assignedTo": "507f1f77bcf86cd799439012"
+}
+
+###
+
+### Update Case - Change Status
+# Update only the case status
+PUT {{baseUrl}}/cases/507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "closed"
+}
+
+###
+
+### Update Case - Assign to Officer
+# Assign case to a legal officer
+# Replace userId with actual legal officer user ID
+PUT {{baseUrl}}/cases/507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "assignedTo": "507f1f77bcf86cd799439012"
+}
+
+###
+
+### Update Case - Unassign from Officer
+# Remove assignment (set to null)
+PUT {{baseUrl}}/cases/507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "assignedTo": null
+}
+
+###
+
+### Update Case - Full Update
+# Update multiple fields at once
+PUT {{baseUrl}}/cases/507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated Case Title",
+  "description": "Updated description with more details about the case.",
+  "category": "discrimination",
+  "status": "inProgress",
+  "priority": "high",
+  "assignedTo": "507f1f77bcf86cd799439012"
+}
+
+###
+
+### Delete Case
+# Protected endpoint - requires admin or legalOfficer role
+# Guest users cannot delete cases
+# Replace caseId with actual case ID
+DELETE {{baseUrl}}/cases/507f1f77bcf86cd799439011
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+#################################################################
+### ERROR TESTING
+#################################################################
+
+### Register User - Missing Fields
+# Should return 400 Bad Request
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User"
+}
+
+###
+
+### Register User - Duplicate Email
+# Should return 400 Bad Request (email already exists)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Another User",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+###
+
+### Login - Invalid Credentials
+# Should return 401 Unauthorized
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "wrongpassword"
+}
+
+###
+
+### Get Cases - Unauthorized (Guest User)
+# Should return 403 Forbidden (if using guest token)
+GET {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Get Case by ID - Not Found
+# Should return 404 Not Found
+GET {{baseUrl}}/cases/000000000000000000000000
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+
+### Create Case - Missing Required Fields
+# Should return 400 Bad Request
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Incomplete Case"
+}
+
+###
+
+### Create Case - Invalid Category
+# Should return 400 Bad Request (validation error)
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Invalid Category Test",
+  "description": "This should fail due to invalid category",
+  "category": "invalidCategory",
+  "priority": "medium"
+}
+
+###
+
+### Create Case - Invalid Priority
+# Should return 400 Bad Request (validation error)
+POST {{baseUrl}}/cases
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Invalid Priority Test",
+  "description": "This should fail due to invalid priority",
+  "category": "harassment",
+  "priority": "invalidPriority"
+}
+
+###
+
+### Get Current User - No Token
+# Should return 401 Unauthorized
+GET {{baseUrl}}/auth/me
+Content-Type: application/json
+
+###
+
+### Get Current User - Invalid Token
+# Should return 401 Unauthorized
+GET {{baseUrl}}/auth/me
+Content-Type: application/json
+Authorization: Bearer invalid_token_here
+
+
+
+
+
+
+
+
+

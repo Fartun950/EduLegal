@@ -1,0 +1,1276 @@
+{
+	"info": {
+		"_postman_id": "edulegal-api-collection",
+		"name": "EduLegal Backend API",
+		"description": "Complete API collection for EduLegal System - Education Legal Management Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "edulegal-backend"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success field\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('success');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Public endpoint - no authentication required. Returns server status and timestamp."
+					},
+					"response": []
+				}
+			],
+			"description": "Health check endpoints to verify server status"
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register New User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Response contains token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('token');",
+									"    ",
+									"    // Save token to environment variable",
+									"    if (jsonData.data.token) {",
+									"        pm.environment.set(\"token\", jsonData.data.token);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Public endpoint - no authentication required. All users default to 'guest' role. Returns user data and JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Register Student User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"password\": \"securepass456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Example: Student registration"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Staff User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Staff Member\",\n  \"email\": \"staff@example.com\",\n  \"password\": \"staffpass789\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Example: Staff registration (also defaults to guest role)"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('token');",
+									"    ",
+									"    // Save token to environment variable",
+									"    if (jsonData.data.token) {",
+									"        pm.environment.set(\"token\", jsonData.data.token);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Public endpoint - no authentication required. Returns user data and JWT token for authenticated requests. Copy the token from response and use it in {{token}} variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Login Admin User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"adminpass123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Replace with actual admin credentials"
+					},
+					"response": []
+				},
+				{
+					"name": "Login Legal Officer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"officer@example.com\",\n  \"password\": \"officerpass123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Replace with actual legal officer credentials"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Protected endpoint - requires authentication. Returns information about currently authenticated user."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, and profile management"
+		},
+		{
+			"name": "Cases - Categories",
+			"item": [
+				{
+					"name": "Get All Available Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases/categories",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								"categories"
+							]
+						},
+						"description": "Public endpoint - no authentication required. Returns all case categories including staff-related ones."
+					},
+					"response": []
+				}
+			],
+			"description": "Public endpoints for retrieving available case categories"
+		},
+		{
+			"name": "Cases - Create",
+			"item": [
+				{
+					"name": "Create New Case - Harassment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Harassment Complaint\",\n  \"description\": \"I am experiencing harassment from a fellow student. This has been ongoing for several weeks and I need help resolving this issue.\",\n  \"category\": \"harassment\",\n  \"priority\": \"high\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Protected endpoint - requires authentication (any role). Guest users can create cases with any category. Defaults: status='open', priority='medium'"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case - Academic Issue",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Grade Appeal Request\",\n  \"description\": \"I believe my grade was calculated incorrectly for the final exam. I would like to request a review of my exam paper.\",\n  \"category\": \"gradeAppeal\",\n  \"priority\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Example: Grade appeal or academic dispute"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case - Bullying",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Bullying Incident Report\",\n  \"description\": \"I have been subjected to repeated bullying incidents in the cafeteria. The situation has escalated and I fear for my safety.\",\n  \"category\": \"bullying\",\n  \"priority\": \"high\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Example: Bullying complaint"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case - Workplace Harassment (Staff)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Workplace Harassment Report\",\n  \"description\": \"I am experiencing harassment from my supervisor. This includes inappropriate comments and behavior that makes me uncomfortable.\",\n  \"category\": \"workplaceHarassment\",\n  \"priority\": \"high\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Example: Staff member reporting workplace harassment. Guest users (including staff) can submit staff-related cases."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case - Sexual Harassment (Staff)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Sexual Harassment Complaint\",\n  \"description\": \"I have been a victim of sexual harassment in the workplace. This needs immediate attention and investigation.\",\n  \"category\": \"sexualHarassment\",\n  \"priority\": \"high\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Example: Staff sexual harassment complaint"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case - Legal Matter",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Legal Consultation Needed\",\n  \"description\": \"I need legal consultation regarding a contract matter with the institution.\",\n  \"category\": \"legal\",\n  \"priority\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Example: Legal category case"
+					},
+					"response": []
+				}
+			],
+			"description": "Protected endpoints for creating cases. Requires authentication (any role). Guest users can create cases with any category."
+		},
+		{
+			"name": "Cases - View/Manage",
+			"item": [
+				{
+					"name": "Get All Cases",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Protected endpoint - requires admin or legalOfficer role. Guest users cannot view cases list. Optional query parameters: ?category=harassment&status=open&assignedTo=userId"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Cases - Filter by Category",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases?category=harassment",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "harassment"
+								}
+							]
+						},
+						"description": "Filter cases by category"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Cases - Filter by Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases?status=open",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "open"
+								}
+							]
+						},
+						"description": "Filter cases by status (open, inProgress, closed)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Cases - Multiple Filters",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases?category=harassment&status=open",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "harassment"
+								},
+								{
+									"key": "status",
+									"value": "open"
+								}
+							]
+						},
+						"description": "Combine multiple filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Case by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases/:caseId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": "507f1f77bcf86cd799439011",
+									"description": "Replace with actual case ID from previous responses"
+								}
+							]
+						},
+						"description": "Protected endpoint - requires admin or legalOfficer role. Guest users cannot view individual cases."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Case",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"inProgress\",\n  \"priority\": \"high\",\n  \"assignedTo\": \"507f1f77bcf86cd799439012\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases/:caseId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": "507f1f77bcf86cd799439011",
+									"description": "Replace with actual case ID"
+								}
+							]
+						},
+						"description": "Protected endpoint - requires admin or legalOfficer role. Guest users cannot update cases. All fields are optional - only provided fields will be updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Case - Change Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"closed\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases/:caseId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Update only the case status"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Case - Assign to Officer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assignedTo\": \"507f1f77bcf86cd799439012\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases/:caseId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Assign case to a legal officer. Replace userId with actual legal officer user ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Case - Unassign from Officer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assignedTo\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases/:caseId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Remove assignment (set to null)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Case - Full Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Case Title\",\n  \"description\": \"Updated description with more details about the case.\",\n  \"category\": \"discrimination\",\n  \"status\": \"inProgress\",\n  \"priority\": \"high\",\n  \"assignedTo\": \"507f1f77bcf86cd799439012\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases/:caseId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Update multiple fields at once"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Case",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases/:caseId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								":caseId"
+							],
+							"variable": [
+								{
+									"key": "caseId",
+									"value": "507f1f77bcf86cd799439011",
+									"description": "Replace with actual case ID"
+								}
+							]
+						},
+						"description": "Protected endpoint - requires admin or legalOfficer role. Guest users cannot delete cases."
+					},
+					"response": []
+				}
+			],
+			"description": "Protected endpoints for viewing and managing cases. Requires admin or legalOfficer role."
+		},
+		{
+			"name": "Error Testing",
+			"item": [
+				{
+					"name": "Register User - Missing Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Should return 400 Bad Request"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Invalid Credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"nonexistent@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Should return 401 Unauthorized"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Case by ID - Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cases/000000000000000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases",
+								"000000000000000000000000"
+							]
+						},
+						"description": "Should return 404 Not Found"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case - Missing Required Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Incomplete Case\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cases",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cases"
+							]
+						},
+						"description": "Should return 400 Bad Request"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User - No Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Should return 401 Unauthorized"
+					},
+					"response": []
+				}
+			],
+			"description": "Error testing endpoints to verify proper error handling"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	]
+}
+
+
+
+
+
+
+
+
+
