@@ -8,6 +8,12 @@ export default defineConfig({
     port: 5173,
     host: true,
     strictPort: false, // If port 5173 is in use, Vite will try the next available port
+    // Allow requests from Render deployment
+    allowedHosts: [
+      'education-legalsys.onrender.com',
+      'localhost',
+      '127.0.0.1',
+    ],
     proxy: {
       // Proxy API requests to backend during development
       '/api': {
