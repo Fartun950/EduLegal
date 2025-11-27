@@ -2,6 +2,8 @@
 // Handles notification-related operations
 // All routes require authentication
 
+import Notification from '../models/Notification.js';
+
 /**
  * Get all notifications for current user
  * GET /api/notifications
@@ -9,12 +11,17 @@
  */
 export const getNotifications = async (req, res) => {
   try {
-    // For now, return empty array as notifications are not yet fully implemented
-    // This prevents 404 errors when frontend tries to fetch notifications
+    // Get all notifications for the authenticated user
+    // Sort by newest first
+    const notifications = await Notification.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(100); // Limit to most recent 100 notifications
+    
     res.status(200).json({
       success: true,
+      count: notifications.length,
       data: {
-        notifications: [],
+        notifications,
       },
     });
   } catch (error) {
@@ -33,11 +40,16 @@ export const getNotifications = async (req, res) => {
  */
 export const getUnreadCount = async (req, res) => {
   try {
-    // For now, return 0 as notifications are not yet fully implemented
+    // Count unread notifications for the authenticated user
+    const unreadCount = await Notification.countDocuments({
+      user: req.user._id,
+      read: false,
+    });
+    
     res.status(200).json({
       success: true,
       data: {
-        unreadCount: 0,
+        unreadCount,
       },
     });
   } catch (error) {
@@ -53,23 +65,44 @@ export const getUnreadCount = async (req, res) => {
  * Mark notification as read
  * PUT /api/notifications/:id/read
  * Marks a specific notification as read
+ * User can only mark their own notifications as read
  */
 export const markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // For now, return success as notifications are not yet fully implemented
+    // Find notification and verify it belongs to the user
+    const notification = await Notification.findOne({
+      _id: id,
+      user: req.user._id,
+    });
+    
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        message: 'Notification not found or access denied',
+      });
+    }
+    
+    // Mark as read
+    notification.read = true;
+    await notification.save();
+    
     res.status(200).json({
       success: true,
       message: 'Notification marked as read',
       data: {
-        notification: {
-          _id: id,
-          read: true,
-        },
+        notification,
       },
     });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({
+        success: false,
+        message: 'Notification not found',
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Error marking notification as read',
@@ -85,10 +118,23 @@ export const markAsRead = async (req, res) => {
  */
 export const markAllAsRead = async (req, res) => {
   try {
-    // For now, return success as notifications are not yet fully implemented
+    // Mark all unread notifications for the user as read
+    const result = await Notification.updateMany(
+      {
+        user: req.user._id,
+        read: false,
+      },
+      {
+        $set: { read: true },
+      }
+    );
+    
     res.status(200).json({
       success: true,
       message: 'All notifications marked as read',
+      data: {
+        updatedCount: result.modifiedCount,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -103,17 +149,41 @@ export const markAllAsRead = async (req, res) => {
  * Delete notification
  * DELETE /api/notifications/:id
  * Deletes a specific notification
+ * User can only delete their own notifications
  */
 export const deleteNotification = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // For now, return success as notifications are not yet fully implemented
+    // Find notification and verify it belongs to the user
+    const notification = await Notification.findOne({
+      _id: id,
+      user: req.user._id,
+    });
+    
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        message: 'Notification not found or access denied',
+      });
+    }
+    
+    // Delete notification
+    await Notification.findByIdAndDelete(id);
+    
     res.status(200).json({
       success: true,
       message: 'Notification deleted successfully',
+      data: {},
     });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({
+        success: false,
+        message: 'Notification not found',
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Error deleting notification',

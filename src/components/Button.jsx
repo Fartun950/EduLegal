@@ -15,9 +15,10 @@ const Button = ({
   const variantStyles = {
     primary: 'bg-primary-500 hover:bg-primary-600 text-white border-primary-500 hover:border-primary-600 shadow-md hover:shadow-lg',
     secondary: 'bg-secondary-500 hover:bg-secondary-600 text-white border-secondary-500 hover:border-secondary-600 shadow-md hover:shadow-lg',
+    cta: 'bg-secondary-500 hover:bg-secondary-600 text-white border-secondary-500 hover:border-secondary-600 btn-cta', // Teal for high-priority CTAs
     outline: 'bg-transparent hover:bg-primary-50 text-primary-600 border-primary-300 hover:border-primary-400 hover:text-primary-700',
     danger: 'bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 shadow-md hover:shadow-lg',
-    accent: 'bg-accent-500 hover:bg-accent-600 text-gray-900 border-accent-500 hover:border-accent-600 shadow-md hover:shadow-lg',
+    accent: 'bg-accent-500 hover:bg-accent-600 text-white border-accent-500 hover:border-accent-600 shadow-md hover:shadow-lg',
   }
 
   // Size styles

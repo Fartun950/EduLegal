@@ -50,16 +50,29 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await authService.login(credentials)
-      // Backend returns: { success: true, token, role }
+      
+      // Backend returns: { success: true, token, role, user: {...} }
       // Create user object from response
-      const role = response.role || response.data?.role || 'guest'
-      const userData = { role }
+      const role = response.role || response.user?.role || 'guest'
+      const normalizedRole = role === 'legalOfficer' ? 'legal' : role
+      
+      // Use full user object if provided, otherwise create minimal object
+      const userData = response.user 
+        ? { ...response.user, role: normalizedRole }
+        : { role: normalizedRole, id: response.user?.id }
+      
+      // Update state and localStorage
       setUser(userData)
       setIsAuthenticated(true)
-      localStorage.setItem('role', role)
+      localStorage.setItem('role', normalizedRole)
       localStorage.setItem('user', JSON.stringify(userData))
+      
       return response
     } catch (error) {
+      console.error('AuthContext login error:', error)
+      // Clear any partial authentication state
+      setUser(null)
+      setIsAuthenticated(false)
       throw error
     }
   }
@@ -67,16 +80,28 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const response = await authService.register(userData)
-      // Backend returns: { success: true, token, role }
-      // Create user object from response
-      const role = response.role || response.data?.role || 'guest'
-      const userData_response = { role }
+      // Backend returns: { success: true, token, role, user: {...} }
+      // Use full user object from response
+      const role = response.role || response.user?.role || 'guest'
+      const normalizedRole = role === 'legalOfficer' ? 'legal' : role
+      
+      // Use full user object if provided, otherwise create minimal object
+      const userData_response = response.user 
+        ? { ...response.user, role: normalizedRole }
+        : { role: normalizedRole, id: response.user?.id }
+      
+      // Update state and localStorage
       setUser(userData_response)
       setIsAuthenticated(true)
-      localStorage.setItem('role', role)
+      localStorage.setItem('role', normalizedRole)
       localStorage.setItem('user', JSON.stringify(userData_response))
+      
       return response
     } catch (error) {
+      console.error('AuthContext register error:', error)
+      // Clear any partial authentication state
+      setUser(null)
+      setIsAuthenticated(false)
       throw error
     }
   }
@@ -85,6 +110,10 @@ export const AuthProvider = ({ children }) => {
     authService.logout()
     setUser(null)
     setIsAuthenticated(false)
+    // Clear any auth-related state
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('role')
   }
 
   const updateUser = (userData) => {

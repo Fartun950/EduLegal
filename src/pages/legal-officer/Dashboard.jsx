@@ -193,31 +193,31 @@ const Dashboard = () => {
 
   const renderCaseRow = (caseItem) => (
     <>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+      <td className="px-8 py-5 whitespace-nowrap text-sm font-medium text-gray-900">
         {caseItem.id}
       </td>
-      <td className="px-6 py-4 text-sm text-gray-700">
+      <td className="px-8 py-5 text-sm text-gray-700">
         <div>
-          <p className="font-medium">{caseItem.title}</p>
-          <p className="text-xs text-gray-500">{caseItem.student}</p>
+          <p className="font-semibold text-gray-900">{caseItem.title}</p>
+          <p className="text-xs text-gray-500 mt-1">{caseItem.student}</p>
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-8 py-5 whitespace-nowrap">
         <span
-          className={`px-2 py-1 text-xs font-semibold rounded-full ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-full ${
             caseItem.status === 'Open'
               ? 'bg-green-100 text-green-800'
               : caseItem.status === 'In Progress'
-              ? 'bg-blue-100 text-blue-800'
+              ? 'bg-amber-100 text-amber-800'
               : 'bg-gray-100 text-gray-800'
           }`}
         >
           {caseItem.status}
         </span>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">
+      <td className="px-8 py-5 whitespace-nowrap">
         <span
-          className={`px-2 py-1 text-xs font-semibold rounded-full ${
+          className={`px-3 py-1.5 text-xs font-semibold rounded-full ${
             caseItem.priority === 'High'
               ? 'bg-red-100 text-red-800'
               : caseItem.priority === 'Medium'
@@ -228,19 +228,21 @@ const Dashboard = () => {
           {caseItem.priority}
         </span>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-        <div className="w-24 bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-blue-600 h-2 rounded-full transition-all"
-            style={{ width: `${caseItem.progress}%` }}
-          ></div>
+      <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-700">
+        <div className="flex items-center gap-2">
+          <div className="w-32 bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-blue-600 h-2.5 rounded-full transition-all"
+              style={{ width: `${caseItem.progress}%` }}
+            ></div>
+          </div>
+          <span className="text-xs font-medium text-gray-600">{caseItem.progress}%</span>
         </div>
-        <span className="text-xs text-gray-500 mt-1">{caseItem.progress}%</span>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+      <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-700">
         {caseItem.date}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+      <td className="px-8 py-5 whitespace-nowrap text-sm font-medium">
         <Link to={`/officer/case/${caseItem._id || caseItem.id}`}>
           <Button variant="outline" size="sm">
             <Eye size={14} className="inline mr-1" />
@@ -266,39 +268,39 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Dashboard Overview */}
       <Card title="Dashboard Overview">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-            <p className="text-sm text-gray-600 mb-2">Assigned Cases</p>
-            <p className="text-3xl font-bold text-blue-600">{stats.assigned}</p>
-            <p className="text-xs text-gray-500 mt-1">{stats.open} Open</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="text-center p-6 bg-blue-50 rounded-lg border border-blue-100 shadow-sm hover:shadow-card-hover transition-all">
+            <p className="text-sm font-medium text-gray-600 mb-3">Assigned Cases</p>
+            <p className="text-4xl font-bold text-blue-600 mb-1">{stats.assigned}</p>
+            <p className="text-xs text-gray-500">{stats.open} Open</p>
           </div>
-          <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-100">
-            <p className="text-sm text-gray-600 mb-2">In Progress</p>
-            <p className="text-3xl font-bold text-yellow-600">{stats.inProgress}</p>
-            <p className="text-xs text-gray-500 mt-1">Active cases</p>
+          <div className="text-center p-6 bg-amber-50 rounded-lg border border-amber-100 shadow-sm hover:shadow-card-hover transition-all">
+            <p className="text-sm font-medium text-gray-600 mb-3">In Progress</p>
+            <p className="text-4xl font-bold text-amber-600 mb-1">{stats.inProgress}</p>
+            <p className="text-xs text-gray-500">Active cases</p>
           </div>
-          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100">
-            <p className="text-sm text-gray-600 mb-2">Closed</p>
-            <p className="text-3xl font-bold text-green-600">{stats.closed}</p>
-            <p className="text-xs text-gray-500 mt-1">Resolved</p>
+          <div className="text-center p-6 bg-green-50 rounded-lg border border-green-100 shadow-sm hover:shadow-card-hover transition-all">
+            <p className="text-sm font-medium text-gray-600 mb-3">Closed</p>
+            <p className="text-4xl font-bold text-green-600 mb-1">{stats.closed}</p>
+            <p className="text-xs text-gray-500">Resolved</p>
           </div>
-          <div className="text-center p-4 bg-red-50 rounded-lg border border-red-100">
-            <p className="text-sm text-gray-600 mb-2">Urgent</p>
-            <p className="text-3xl font-bold text-red-600">{stats.urgent}</p>
-            <p className="text-xs text-gray-500 mt-1">High priority</p>
+          <div className="text-center p-6 bg-red-50 rounded-lg border border-red-100 shadow-sm hover:shadow-card-hover transition-all">
+            <p className="text-sm font-medium text-gray-600 mb-3">Urgent</p>
+            <p className="text-4xl font-bold text-red-600 mb-1">{stats.urgent}</p>
+            <p className="text-xs text-gray-500">High priority</p>
           </div>
-          <div className="text-center p-4 bg-purple-50 rounded-lg border border-purple-100">
-            <p className="text-sm text-gray-600 mb-2">Notifications</p>
-            <p className="text-3xl font-bold text-purple-600">
+          <div className="text-center p-6 bg-secondary-50 rounded-lg border border-secondary-100 shadow-sm hover:shadow-card-hover transition-all">
+            <p className="text-sm font-medium text-gray-600 mb-3">Notifications</p>
+            <p className="text-4xl font-bold text-secondary-600 mb-1">
               {notifications.filter(n => !n.read).length}
             </p>
-            <p className="text-xs text-gray-500 mt-1">Unread</p>
+            <p className="text-xs text-gray-500">Unread</p>
           </div>
         </div>
       </Card>
 
       {/* Charts and Notifications Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Case Status Chart */}
         <Card title="Case Status Distribution">
           <PieChartComponent data={statusData} dataKey="value" />
@@ -395,16 +397,16 @@ const Dashboard = () => {
         ) : assignedCases.length === 0 ? (
           <EmptyCases onRetry={() => window.location.reload()} />
         ) : viewMode === 'cards' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {assignedCases.map((caseItem) => (
               <div
                 key={caseItem.id}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-smooth bg-white"
+                className="border-2 border-gray-200 rounded-lg p-6 hover:shadow-card-hover transition-all duration-300 bg-white card-hover"
               >
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-xl font-semibold text-gray-900">
                         {caseItem.title}
                       </h3>
                       <Badge
@@ -412,7 +414,7 @@ const Dashboard = () => {
                           caseItem.status === 'Open'
                             ? 'success'
                             : caseItem.status === 'In Progress'
-                            ? 'primary'
+                            ? 'warning'
                             : 'default'
                         }
                         size="sm"
@@ -420,30 +422,30 @@ const Dashboard = () => {
                         {caseItem.status}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-1">
+                    <p className="text-sm text-gray-600 mb-2">
                       <strong>Case ID:</strong> {caseItem.id}
                     </p>
-                    <p className="text-sm text-gray-600 mb-2">
+                    <p className="text-sm text-gray-600 mb-3">
                       <strong>Student:</strong> {caseItem.student}
                     </p>
-                    <p className="text-sm text-gray-700 mb-3 line-clamp-2">
+                    <p className="text-sm text-gray-700 mb-4 line-clamp-2 leading-relaxed">
                       {caseItem.description}
                     </p>
                   </div>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">Progress</span>
-                    <span className="text-xs font-medium text-gray-700">{caseItem.progress}%</span>
+                    <span className="text-sm font-medium text-gray-600">Progress</span>
+                    <span className="text-sm font-semibold text-gray-700">{caseItem.progress}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-3">
                     <div
-                      className="bg-blue-600 h-2 rounded-full transition-all"
+                      className="bg-blue-600 h-3 rounded-full transition-all"
                       style={{ width: `${caseItem.progress}%` }}
                     ></div>
                   </div>
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <div className="flex items-center gap-3">
                       <Badge
                         variant={
                           caseItem.priority === 'High'
@@ -459,7 +461,7 @@ const Dashboard = () => {
                       <span className="text-xs text-gray-500">{caseItem.lastUpdate}</span>
                     </div>
                     <Link to={`/officer/case/${caseItem._id || caseItem.id}`}>
-                      <Button variant="primary" size="sm">
+                      <Button variant="primary" size="sm" className="btn-hover">
                         <Eye size={14} className="inline mr-1" />
                         View Details
                       </Button>

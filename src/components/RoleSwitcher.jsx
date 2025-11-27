@@ -91,12 +91,69 @@ const RoleSwitcher = () => {
 
     // Guest is always allowed without login
     if (role.id === 'guest') {
-      navigate('/welcome')
+      navigate('/welcome', { replace: true })
       return
     }
 
-    // Admin and Legal Officer can access their dashboards directly without authentication
-    // Navigate directly to the selected role's dashboard
+    // Admin and Legal Officer routes require authentication
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      // Check if we're already on welcome page - if so, trigger modal reopen
+      const isOnWelcome = location.pathname === '/welcome' || location.pathname === '/'
+      
+      // Store intent in sessionStorage for persistence across modal close/reopen
+      const loginIntent = {
+        path: role.path,
+        role: role.id,
+      }
+      sessionStorage.setItem('pendingLoginIntent', JSON.stringify(loginIntent))
+      
+      if (isOnWelcome) {
+        // Already on welcome - use a timestamp to force state update
+        // This ensures the useEffect in Welcome page triggers even on same route
+        navigate('/welcome', { 
+          state: { 
+            from: { pathname: role.path },
+            intendedRole: role.id,
+            showLogin: true,
+            timestamp: Date.now() // Force state change
+          },
+          replace: true
+        })
+        // Also trigger a custom event to ensure modal opens
+        window.dispatchEvent(new CustomEvent('openLoginModal', { detail: loginIntent }))
+      } else {
+        // Not on welcome - navigate to welcome with login intent
+        navigate('/welcome', { 
+          state: { 
+            from: { pathname: role.path },
+            intendedRole: role.id,
+            showLogin: true 
+          } 
+        })
+      }
+      return
+    }
+
+    // Check if user has the required role for the selected dashboard
+    const userRole = user?.role || ''
+    const requiredRoles = role.id === 'admin' ? ['admin'] : ['admin', 'legal', 'legalOfficer']
+    const mappedUserRole = userRole === 'legalOfficer' ? 'legal' : userRole
+    
+    if (!requiredRoles.includes(mappedUserRole)) {
+      // User doesn't have required role - redirect to login with message
+      navigate('/welcome', { 
+        state: { 
+          from: { pathname: role.path },
+          intendedRole: role.id,
+          showLogin: true,
+          message: `You need ${role.label} privileges to access this page. Please login with an authorized account.`
+        } 
+      })
+      return
+    }
+
+    // User is authenticated and has the required role - navigate to dashboard
     navigate(role.path)
   }
 

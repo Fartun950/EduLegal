@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { getUserRole } from '../utils/roleUtils'
 import Modal from './Modal'
 import Button from './Button'
 import { AlertCircle, CheckCircle, X } from 'lucide-react'
 
-const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
+const LoginModal = ({ isOpen, onClose, onSwitchToRegister, intendedDestination, onLoginSuccess }) => {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -32,39 +33,46 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
       const response = await login(formData)
       if (response.success === true) {
         setSuccess(true)
-        let role = response.role || localStorage.getItem('role') || 'guest'
-        if (role === 'legalOfficer') {
-          role = 'legal'
-        }
+        
+        // Get role from response or localStorage
+        const role = response.role || getUserRole() || 'guest'
 
-        let redirectPath = '/welcome'
-        const fromPath = location.state?.from?.pathname // Path from ProtectedRoute
+        // Determine redirect path - check for intended destination first
+        // Priority: intendedDestination prop > location.state > role-based
+        let redirectPath = '/welcome' // Default for guest
+        const fromPath = intendedDestination?.path || location.state?.from?.pathname
+        const intendedRole = intendedDestination?.role || location.state?.intendedRole
 
+        // If there's an intended destination from role switcher or protected route
         if (fromPath) {
           redirectPath = fromPath
-          console.log('Redirecting back to protected route:', redirectPath)
+        } else if (intendedRole) {
+          // Use intended role to determine path
+          if (intendedRole === 'admin') {
+            redirectPath = '/admin-dashboard'
+          } else if (intendedRole === 'officer') {
+            redirectPath = '/legal-dashboard'
+          }
         } else {
-          // Fallback to role-based redirect if no 'fromPath'
+          // Fallback to role-based redirect
           if (role === 'admin') {
             redirectPath = '/admin-dashboard'
           } else if (role === 'legal' || role === 'legalOfficer') {
             redirectPath = '/legal-dashboard'
-          } else if (role === 'guest') {
-            redirectPath = '/welcome'
           } else {
-            console.warn('Unrecognized role after login:', role)
-            redirectPath = '/welcome'
+            redirectPath = '/welcome' // Guest dashboard
           }
-          console.log('Redirecting based on authenticated role:', redirectPath)
         }
 
-        localStorage.removeItem('intendedDashboard') // Clear old intended paths
-        localStorage.removeItem('intendedRole')
-
         setFormData({ email: '', password: '' })
+        
+        // Call onLoginSuccess callback if provided (to clear intended destination)
+        if (onLoginSuccess) {
+          onLoginSuccess()
+        }
+        
         onClose() // Close modal first
         setTimeout(() => {
-          console.log('Navigating to:', redirectPath)
           navigate(redirectPath, { replace: true })
         }, 100)
       }

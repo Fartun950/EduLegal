@@ -5,11 +5,22 @@
 import express from 'express';
 import cors from 'cors';
 import net from 'net';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import { ENV } from './config/env.js';
 import authRoutes from './routes/auth.js';
 import caseRoutes from './routes/cases.js';
 import notificationRoutes from './routes/notifications.js';
+import userRoutes from './routes/users.js';
+import forumRoutes from './routes/forum.js';
+import settingsRoutes from './routes/settings.js';
+import complaintRoutes from './routes/complaints.js';
+import reportRoutes from './routes/reports.js';
+import adminRoutes from './routes/admin.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Create Express app
 const app = express();
@@ -32,6 +43,10 @@ app.use(express.json());
 
 // Body parser middleware - parse URL-encoded request bodies
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from uploads directory
+// This allows uploaded files to be accessed via /uploads/... URLs
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API Routes
 
@@ -65,6 +80,42 @@ app.use('/api/cases', caseRoutes);
  * All notification routes are prefixed with /api/notifications
  */
 app.use('/api/notifications', notificationRoutes);
+
+/**
+ * Mount user routes
+ * All user routes are prefixed with /api/users
+ */
+app.use('/api/users', userRoutes);
+
+/**
+ * Mount forum routes
+ * All forum routes are prefixed with /api/forum
+ */
+app.use('/api/forum', forumRoutes);
+
+/**
+ * Mount settings routes
+ * All settings routes are prefixed with /api/settings
+ */
+app.use('/api/settings', settingsRoutes);
+
+/**
+ * Mount complaint routes
+ * All complaint routes are prefixed with /api/complaints
+ */
+app.use('/api/complaints', complaintRoutes);
+
+/**
+ * Mount report routes
+ * All report routes are prefixed with /api/reports
+ */
+app.use('/api/reports', reportRoutes);
+
+/**
+ * Mount admin routes
+ * All admin routes are prefixed with /api/admin
+ */
+app.use('/api/admin', adminRoutes);
 
 // Error Handling Middleware
 

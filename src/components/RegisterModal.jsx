@@ -2,15 +2,17 @@
 // Handles user registration with role selection
 
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { getUserRole } from '../utils/roleUtils'
 import Modal from './Modal'
 import Button from './Button'
 import { AlertCircle, CheckCircle } from 'lucide-react'
 
 const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
-  const { register } = useAuth()
+  const { register, user, updateUser } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,6 +47,22 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
     setLoading(true)
 
+    // Check if current user is an admin BEFORE registration
+    // This is important because register() will overwrite the admin's session
+    const currentUserRole = user?.role || getUserRole() || 'guest'
+    const isAdminRegistering = currentUserRole === 'admin' || currentUserRole === 'legalOfficer'
+    
+    // Save admin session info if admin is registering another user
+    let adminSession = null
+    if (isAdminRegistering) {
+      adminSession = {
+        token: localStorage.getItem('token'),
+        role: localStorage.getItem('role'),
+        user: localStorage.getItem('user'),
+        userId: localStorage.getItem('userId'),
+      }
+    }
+
     try {
       const response = await register({
         name: formData.name,
@@ -53,28 +71,58 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
         role: formData.role,
       })
 
-      if (response.success) {
-        setSuccess(true)
-        let role = response.role || 'guest'
-        if (role === 'legalOfficer') {
-          role = 'legal'
-        }
-
-        let redirectPath = '/welcome'
-        if (role === 'admin') {
-          redirectPath = '/admin-dashboard'
-        } else if (role === 'legal' || role === 'legalOfficer') {
-          redirectPath = '/legal-dashboard'
+      // Ensure response is valid and successful
+      if (response && response.success) {
+        // If admin was registering another user, restore their session
+        if (isAdminRegistering && adminSession) {
+          // Restore admin's session
+          if (adminSession.token) localStorage.setItem('token', adminSession.token)
+          if (adminSession.role) localStorage.setItem('role', adminSession.role)
+          if (adminSession.user) localStorage.setItem('user', adminSession.user)
+          if (adminSession.userId) localStorage.setItem('userId', adminSession.userId)
+          
+          // Update AuthContext user state back to admin
+          const adminUser = adminSession.user ? JSON.parse(adminSession.user) : null
+          if (adminUser && updateUser) {
+            updateUser(adminUser)
+          }
+          
+          // Admin is registering another user - don't redirect, just close modal
+          setSuccess(true)
+          // Reset form after a brief delay to show success message
+          setTimeout(() => {
+            onClose()
+            setFormData({ name: '', email: '', password: '', confirmPassword: '', role: 'guest' })
+            setSuccess(false)
+          }, 1500)
         } else {
-          redirectPath = '/welcome'
-        }
+          // Self-registration - redirect to appropriate dashboard
+          // Use the original form role to determine redirect - this is what user selected
+          // Backend may return 'legal' for 'legalOfficer', but we use original form value
+          const selectedRole = formData.role // 'legalOfficer', 'admin', or 'guest'
+          
+          // Determine redirect path based on the role user selected in the form
+          let redirectPath = '/welcome' // Default for guest
+          
+          if (selectedRole === 'admin') {
+            redirectPath = '/admin-dashboard'
+          } else if (selectedRole === 'legalOfficer') {
+            redirectPath = '/legal-dashboard'
+          } else {
+            redirectPath = '/welcome' // Guest dashboard
+          }
 
-        setTimeout(() => {
+          // Set success state
+          setSuccess(true)
+          
+          // Close modal and redirect immediately
+          // authService.register() already saved token, role, userId, and legalOfficerId to localStorage
           onClose()
-          setSuccess(false)
           setFormData({ name: '', email: '', password: '', confirmPassword: '', role: 'guest' })
+          
+          // Redirect immediately using React Router - no delay needed
           navigate(redirectPath, { replace: true })
-        }, 1000)
+        }
       }
     } catch (err) {
       let errorMessage = 'Registration failed. Please try again.'
@@ -103,7 +151,11 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin }) => {
         {success && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2">
             <CheckCircle className="text-green-600" size={20} />
-            <p className="text-sm text-green-800">Registration successful! Redirecting...</p>
+            <p className="text-sm text-green-800">
+              {user?.role === 'admin' || getUserRole() === 'admin' 
+                ? 'User registered successfully!' 
+                : 'Registration successful! Redirecting...'}
+            </p>
           </div>
         )}
 

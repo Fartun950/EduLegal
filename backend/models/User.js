@@ -47,6 +47,13 @@ const userSchema = mongoose.Schema(
       },
       default: 'guest',
     },
+    // User preferences (theme, notifications, etc.)
+    preferences: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {
+        theme: 'light', // 'light' or 'dark'
+      },
+    },
   },
   {
     // Automatically add createdAt and updatedAt timestamps

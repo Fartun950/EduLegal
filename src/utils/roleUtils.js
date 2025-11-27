@@ -1,6 +1,9 @@
 // Role Utilities - Centralized role mapping and checking logic
 // Reduces code duplication across components
 
+// Import centralized route functions
+import { isPublicRoute as checkPublicRoute, getDashboardPathForRole as getDashboardPath } from '../config/routes'
+
 /**
  * Maps frontend role names to backend role names
  * Frontend: 'admin', 'officer', 'legalOfficer', 'student', 'guest', 'staff'
@@ -71,24 +74,28 @@ export const getRoleFromPath = (pathname) => {
 
 /**
  * Check if pathname is a public/guest route
+ * NOTE: This function now uses centralized config from routes.js
+ * Kept here for backward compatibility
  */
 export const isPublicRoute = (pathname) => {
-  const publicPaths = ['/welcome', '/complaint', '/resources', '/login']
-  return publicPaths.some(path => pathname.startsWith(path))
+  return checkPublicRoute(pathname)
 }
 
 /**
  * Get the default dashboard path for a backend role
+ * NOTE: This function now uses centralized config from routes.js
+ * Kept here for backward compatibility
  */
 export const getDashboardPathForRole = (backendRole) => {
-  switch ((backendRole || '').toLowerCase()) {
-    case 'admin':
-      return '/admin-dashboard'
-    case 'legalofficer':
-      return '/legal-dashboard'
-    default:
-      return '/welcome'
-  }
+  return getDashboardPath(backendRole)
+}
+
+/**
+ * Get user role from localStorage
+ * Returns the role stored in localStorage, or null if not found
+ */
+export function getUserRole() {
+  return localStorage.getItem('role')
 }
 
 

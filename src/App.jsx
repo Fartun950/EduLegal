@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import ProtectedRoute from './components/ProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
 import AdminDashboard from './pages/AdminDashboard'
@@ -8,20 +9,43 @@ import CasesList from './pages/legal-officer/CasesList'
 import CaseDetails from './pages/legal-officer/CaseDetails'
 import Forum from './pages/legal-officer/Forum'
 import StudentComplaintForm from './pages/StudentComplaintForm'
+import ComplaintForm from './pages/ComplaintForm'
+import Login from './pages/Login'
+import OfficerDashboard from './pages/OfficerDashboard'
 import Welcome from './pages/Welcome'
 import Resources from './pages/Resources'
 import Settings from './pages/Settings'
+import { ROUTES } from './config/routes'
+import { initNavigationService } from './services/navigationService'
+import navigationService from './services/navigationService'
 
-function App() {
+// Component to initialize navigation service
+const NavigationInitializer = () => {
+  const navigate = useNavigate()
+  
+  useEffect(() => {
+    // Initialize navigation service with React Router's navigate function
+    initNavigationService(navigate)
+    
+    // Make navigation service available globally for api.js interceptor
+    if (typeof window !== 'undefined') {
+      window.__navigationService = navigationService
+    }
+  }, [navigate])
+  
+  return null
+}
+
+function AppRoutes() {
   return (
-    <ErrorBoundary>
-      <Router>
-        <Routes>
+    <>
+      <NavigationInitializer />
+      <Routes>
         {/* Public/Guest Routes - Fully accessible without authentication */}
         {/* These routes do NOT require login - guests can access freely */}
-        <Route path="/" element={<Navigate to="/welcome" replace />} />
+        <Route path="/" element={<Navigate to={ROUTES.WELCOME} replace />} />
         <Route 
-          path="/welcome" 
+          path={ROUTES.WELCOME} 
           element={
             <ProtectedRoute requireAuth={false}>
               <Welcome />
@@ -29,7 +53,7 @@ function App() {
           } 
         />
         <Route 
-          path="/resources" 
+          path={ROUTES.RESOURCES} 
           element={
             <ProtectedRoute requireAuth={false}>
               <Resources />
@@ -38,14 +62,25 @@ function App() {
         />
         {/* Login Route - public, used for auth redirects */}
         <Route 
-          path="/login" 
+          path={ROUTES.LOGIN} 
           element={
-            <Welcome forceLoginOpen />
+            <ProtectedRoute requireAuth={false}>
+              <Login />
+            </ProtectedRoute>
           } 
         />
         {/* Complaint form - guests can access but may need to login to submit */}
         <Route 
-          path="/complaint" 
+          path={ROUTES.COMPLAINT} 
+          element={
+            <ProtectedRoute requireAuth={false}>
+              <ComplaintForm />
+            </ProtectedRoute>
+          } 
+        />
+        {/* Alternative complaint route using StudentComplaintForm for backward compatibility */}
+        <Route 
+          path={ROUTES.COMPLAINT_OLD} 
           element={
             <ProtectedRoute requireAuth={false}>
               <StudentComplaintForm />
@@ -55,7 +90,7 @@ function App() {
         
         {/* Admin Routes - Requires admin role */}
         <Route 
-          path="/admin" 
+          path={ROUTES.ADMIN} 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboard />
@@ -63,7 +98,7 @@ function App() {
           } 
         />
         <Route 
-          path="/admin-dashboard" 
+          path={ROUTES.ADMIN_DASHBOARD} 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboard />
@@ -73,7 +108,7 @@ function App() {
         
         {/* Legal Officer Routes - Requires legalOfficer role */}
         <Route 
-          path="/officer" 
+          path={ROUTES.OFFICER} 
           element={
             <ProtectedRoute allowedRoles={['admin', 'legalOfficer']}>
               <LegalOfficerLayout />
@@ -88,7 +123,7 @@ function App() {
         
         {/* Legal Dashboard Routes - Alias for /officer */}
         <Route 
-          path="/legal-dashboard" 
+          path={ROUTES.LEGAL_DASHBOARD} 
           element={
             <ProtectedRoute allowedRoles={['admin', 'legalOfficer']}>
               <LegalOfficerLayout />
@@ -101,9 +136,19 @@ function App() {
           <Route path="forum" element={<Forum />} />
         </Route>
         
+        {/* Officer Dashboard Route - New dashboard with metrics/trends/assigned cases */}
+        <Route 
+          path={ROUTES.OFFICER_DASHBOARD} 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'legalOfficer']}>
+              <OfficerDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        
         {/* Student Dashboard Route - Public/Guest access */}
         <Route 
-          path="/student-dashboard" 
+          path={ROUTES.STUDENT_DASHBOARD} 
           element={
             <ProtectedRoute requireAuth={false}>
               <Welcome />
@@ -113,7 +158,7 @@ function App() {
         
         {/* Settings Route - Public access (no authentication required) */}
         <Route 
-          path="/settings" 
+          path={ROUTES.SETTINGS} 
           element={
             <ProtectedRoute requireAuth={false}>
               <Settings />
@@ -122,8 +167,17 @@ function App() {
         />
         
         {/* Catch all - redirect to welcome */}
-        <Route path="*" element={<Navigate to="/welcome" replace />} />
-        </Routes>
+        <Route path="*" element={<Navigate to={ROUTES.WELCOME} replace />} />
+      </Routes>
+    </>
+  )
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <Router>
+        <AppRoutes />
       </Router>
     </ErrorBoundary>
   )

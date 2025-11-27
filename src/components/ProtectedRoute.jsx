@@ -1,7 +1,10 @@
 // Protected Route Component for RBAC
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { mapRoleToBackend, isPublicRoute } from '../utils/roleUtils'
+import { mapRoleToBackend, getUserRole } from '../utils/roleUtils'
+import { authService } from '../services/authService'
+import { isPublicRoute, getDashboardPathForRole, ROUTES } from '../config/routes'
+import auditService from '../services/auditService'
 
 // Demo mode flag - MUST be false in production so that auth is enforced
 const DEMO_MODE = false
@@ -10,18 +13,7 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAuth = true }) => 
   const { isAuthenticated, loading, user } = useAuth()
   const location = useLocation()
 
-  // Admin and Legal Officer routes do NOT require authentication
-  // Check this FIRST before any other checks to ensure they always work
-  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/admin-dashboard')
-  const isLegalOfficerRoute = location.pathname.startsWith('/legal') || location.pathname.startsWith('/legal-dashboard') || location.pathname.startsWith('/officer')
-  
-  if (isAdminRoute || isLegalOfficerRoute) {
-    // Allow access without authentication for Admin and Legal Officer
-    // Return children immediately, bypassing all auth checks
-    return children
-  }
-
-  // Show loading state while checking auth (only for other routes)
+  // Show loading state while checking auth
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -55,16 +47,18 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAuth = true }) => 
     }
   }
 
-  // Other protected routes require authentication
-  if (!isAuthenticated) {
-    // Redirect to dedicated login route, preserving where the user came from
-    return <Navigate to="/login" state={{ from: location }} replace />
+  // Check if token exists
+  const token = authService.getToken()
+  if (!token || !isAuthenticated) {
+    // Not logged in - redirect to welcome page with login modal trigger
+    // This ensures the login modal appears when accessing protected routes
+    auditService.logUnauthorizedAccess(location.pathname, null, 'No token or not authenticated')
+    return <Navigate to={ROUTES.WELCOME} state={{ from: location, showLogin: true }} replace />
   }
 
-  // Check role access for protected routes
-  // Skip role check for Admin and Legal Officer routes (they don't require auth)
-  if (allowedRoles.length > 0 && !isAdminRoute && !isLegalOfficerRoute) {
-    const userRole = user?.role || ''
+  // Check role access for protected routes with allowedRoles
+  if (allowedRoles.length > 0) {
+    const userRole = getUserRole() || user?.role || ''
     const mappedUserRole = mapRoleToBackend(userRole)
     const mappedAllowedRoles = allowedRoles.map(role => mapRoleToBackend(role))
     
@@ -83,8 +77,14 @@ const ProtectedRoute = ({ children, allowedRoles = [], requireAuth = true }) => 
           </>
         )
       }
-      // User role doesn't have access - redirect to safe guest home
-      return <Navigate to="/welcome" replace />
+      // Role mismatch - log and redirect to correct dashboard
+      const requiredRoles = allowedRoles.join(', ')
+      auditService.logRoleMismatch(requiredRoles, userRole, location.pathname)
+      
+      const userRoleForPath = userRole === 'legal' || userRole === 'legalOfficer' ? 'legalOfficer' : userRole
+      const dashboardPath = getDashboardPathForRole(userRoleForPath)
+      auditService.logRedirect(location.pathname, dashboardPath, 'Role mismatch')
+      return <Navigate to={dashboardPath} replace />
     }
   }
 

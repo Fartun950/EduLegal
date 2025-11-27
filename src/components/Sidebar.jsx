@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { 
   LayoutDashboard, 
@@ -11,10 +11,21 @@ import {
   Menu,
   X
 } from 'lucide-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
+import { useAuth } from '../context/AuthContext'
 
 const Sidebar = ({ userRole = 'admin' }) => {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  
+  const handleLogout = () => {
+    logout()
+    setIsMobileOpen(false)
+    navigate('/welcome', { replace: true })
+  }
   
   const adminNavItems = [
     { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -39,6 +50,8 @@ const Sidebar = ({ userRole = 'admin' }) => {
     { path: '/settings', label: 'Settings', icon: Settings },
   ]
 
+  // Guest nav items should match student nav items for public routes
+  // This ensures consistent navigation across Welcome, Settings, Resources, and Complaint pages
   const guestNavItems = [
     { path: '/welcome', label: 'Welcome', icon: Home },
     { path: '/complaint', label: 'Submit Complaint', icon: FileText },
@@ -50,7 +63,9 @@ const Sidebar = ({ userRole = 'admin' }) => {
     ? adminNavItems 
     : userRole === 'officer' 
     ? officerNavItems 
-    : userRole === 'guest' || userRole === 'student'
+    : userRole === 'guest'
+    ? guestNavItems
+    : userRole === 'student'
     ? studentNavItems
     : guestNavItems
 
@@ -102,6 +117,19 @@ const Sidebar = ({ userRole = 'admin' }) => {
             )
           })}
         </nav>
+        
+        {/* Logout Button - Only show for admin */}
+        {userRole === 'admin' && (
+          <div className="p-4 border-t border-primary-600">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-primary-100 hover:bg-red-600/50 hover:text-white hover:scale-[1.01]"
+            >
+              <FontAwesomeIcon icon={faRightFromBracket} className="w-5 h-5" />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Mobile Overlay */}

@@ -1,22 +1,22 @@
 const Table = ({ headers, data, renderRow, className = '' }) => {
   return (
-    <div className={`overflow-x-auto ${className}`}>
-      <table className="min-w-full divide-y divide-gray-200">
+    <div className={`overflow-x-auto rounded-lg ${className}`}>
+      <table className="min-w-full divide-y divide-gray-100">
         <thead className="bg-gray-50">
           <tr>
             {headers.map((header, index) => (
               <th
                 key={index}
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-8 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
               >
                 {header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-white divide-y divide-gray-100">
           {data.map((row, index) => (
-            <tr key={index} className="hover:bg-purple-50/30 transition-smooth">
+            <tr key={index} className="hover:bg-blue-50/50 transition-smooth">
               {renderRow(row, index)}
             </tr>
           ))}

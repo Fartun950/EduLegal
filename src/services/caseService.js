@@ -99,7 +99,9 @@ export const caseService = {
     }
   },
 
-  // Delete case (admin/officer only)
+  // Delete case
+  // Admin/officer can delete any case
+  // Guests can only delete their own cases if status is 'open' (new)
   deleteCase: async (caseId) => {
     try {
       const response = await api.delete(`/cases/${caseId}`)
@@ -107,6 +109,17 @@ export const caseService = {
     } catch (error) {
       console.error(`Failed to delete case ${caseId}:`, error)
       throw error // Re-throw for UI to handle
+    }
+  },
+
+  // Get current user's cases (for guests)
+  getMyCases: async () => {
+    try {
+      const response = await api.get('/cases/my')
+      return response.data
+    } catch (error) {
+      console.warn('Failed to fetch my cases:', error)
+      return handleServiceError(error, 'Failed to load your cases')
     }
   },
 

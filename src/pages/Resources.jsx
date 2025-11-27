@@ -26,15 +26,15 @@ const Resources = () => {
       <Sidebar userRole="guest" />
       <div className="flex-1 lg:ml-64 flex flex-col">
         <Header title="Resources" userName="Guest" userRole="guest" />
-        <main className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-6xl mx-auto space-y-8">
+        <main className="flex-1 p-8 overflow-y-auto">
+          <div className="max-w-6xl mx-auto space-y-10">
             
             {/* Page Header */}
-            <div className="text-center py-6">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            <div className="text-center py-8">
+              <h1 className="text-5xl font-bold text-gray-900 mb-4">
                 Resources & Support
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
                 Find helpful information, support services, and guidance for filing complaints and understanding your rights.
               </p>
             </div>
@@ -52,56 +52,56 @@ const Resources = () => {
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-6 bg-blue-50 rounded-lg border border-blue-100 hover:shadow-md transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <CheckCircle className="text-blue-600" size={20} />
+                  <div className="p-8 bg-blue-50 rounded-lg border-2 border-blue-100 hover:shadow-card-hover transition-all duration-300 card-hover">
+                    <div className="flex items-start gap-5">
+                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <CheckCircle className="text-blue-600" size={24} />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-2">Right to Education</h3>
-                        <p className="text-sm text-gray-700">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3">Right to Education</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           All students have the right to equal access to educational opportunities regardless of background, gender, or personal characteristics.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 bg-green-50 rounded-lg border border-green-100 hover:shadow-md transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Shield className="text-green-600" size={20} />
+                  <div className="p-8 bg-green-50 rounded-lg border-2 border-green-100 hover:shadow-card-hover transition-all duration-300 card-hover">
+                    <div className="flex items-start gap-5">
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <Shield className="text-green-600" size={24} />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-2">Right to Safety</h3>
-                        <p className="text-sm text-gray-700">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3">Right to Safety</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           Everyone has the right to a safe and secure learning environment free from harassment, discrimination, or violence.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 bg-purple-50 rounded-lg border border-purple-100 hover:shadow-md transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Users className="text-purple-600" size={20} />
+                  <div className="p-8 bg-purple-50 rounded-lg border-2 border-purple-100 hover:shadow-card-hover transition-all duration-300 card-hover">
+                    <div className="flex items-start gap-5">
+                      <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <Users className="text-purple-600" size={24} />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-2">Right to Privacy</h3>
-                        <p className="text-sm text-gray-700">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3">Right to Privacy</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           Your personal information and complaints are handled with strict confidentiality. You can choose to submit anonymously.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 bg-orange-50 rounded-lg border border-orange-100 hover:shadow-md transition-all">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <FileText className="text-orange-600" size={20} />
+                  <div className="p-8 bg-amber-50 rounded-lg border-2 border-amber-100 hover:shadow-card-hover transition-all duration-300 card-hover">
+                    <div className="flex items-start gap-5">
+                      <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <FileText className="text-amber-600" size={24} />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-2">Right to Appeal</h3>
-                        <p className="text-sm text-gray-700">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3">Right to Appeal</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           You have the right to appeal decisions and seek review of academic or disciplinary matters through proper channels.
                         </p>
                       </div>
@@ -211,13 +211,13 @@ const Resources = () => {
                 <span>Campus Support Services</span>
               </div>
             }>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-all bg-white">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <Users className="text-blue-600" size={24} />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="p-8 border-2 border-gray-200 rounded-lg hover:shadow-card-hover transition-all duration-300 bg-white card-hover">
+                  <div className="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-5 shadow-sm">
+                    <Users className="text-blue-600" size={28} />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Counseling Services</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Counseling Services</h3>
+                  <p className="text-sm text-gray-600 mb-5 leading-relaxed">
                     Professional mental health support and counseling for students and staff.
                   </p>
                   <div className="space-y-2 text-sm text-gray-700">
@@ -233,12 +233,12 @@ const Resources = () => {
                   </div>
                 </div>
 
-                <div className="p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-all bg-white">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                    <FileText className="text-green-600" size={24} />
+                <div className="p-8 border-2 border-gray-200 rounded-lg hover:shadow-card-hover transition-all duration-300 bg-white card-hover">
+                  <div className="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-5 shadow-sm">
+                    <FileText className="text-green-600" size={28} />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Legal Aid Desk</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Legal Aid Desk</h3>
+                  <p className="text-sm text-gray-600 mb-5 leading-relaxed">
                     Free legal consultation and assistance for students facing legal issues.
                   </p>
                   <div className="space-y-2 text-sm text-gray-700">
@@ -254,12 +254,12 @@ const Resources = () => {
                   </div>
                 </div>
 
-                <div className="p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-all bg-white">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                    <Users className="text-purple-600" size={24} />
+                <div className="p-8 border-2 border-gray-200 rounded-lg hover:shadow-card-hover transition-all duration-300 bg-white card-hover">
+                  <div className="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-5 shadow-sm">
+                    <Users className="text-purple-600" size={28} />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Student Affairs Office</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Student Affairs Office</h3>
+                  <p className="text-sm text-gray-600 mb-5 leading-relaxed">
                     Support for student issues, accommodation, and general student services.
                   </p>
                   <div className="space-y-2 text-sm text-gray-700">
@@ -275,12 +275,12 @@ const Resources = () => {
                   </div>
                 </div>
 
-                <div className="p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-all bg-white md:col-span-2 lg:col-span-1">
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                    <AlertCircle className="text-red-600" size={24} />
+                <div className="p-8 border-2 border-red-200 rounded-lg hover:shadow-card-hover transition-all duration-300 bg-red-50/30 card-hover md:col-span-2 lg:col-span-1">
+                  <div className="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center mb-5 shadow-sm">
+                    <AlertCircle className="text-red-600" size={28} />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Emergency Contacts</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Emergency Contacts</h3>
+                  <p className="text-sm text-gray-600 mb-5 leading-relaxed">
                     Immediate assistance for emergencies and urgent situations.
                   </p>
                   <div className="space-y-2 text-sm text-gray-700">
@@ -398,22 +398,22 @@ const Resources = () => {
             </Card>
 
             {/* Quick Action Section */}
-            <div className="bg-gradient-to-r from-teal-500 to-blue-600 rounded-lg p-8 text-white">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="bg-gradient-to-r from-secondary-500 to-secondary-600 rounded-lg p-10 text-white shadow-card-hover">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold mb-2">Need Help Filing a Complaint?</h2>
-                  <p className="text-teal-50 mb-4">
+                  <h2 className="text-3xl font-bold mb-3">Need Help Filing a Complaint?</h2>
+                  <p className="text-teal-50 mb-6 text-lg leading-relaxed">
                     Our team is here to assist you. Get started by filing your complaint through our secure system.
                   </p>
                   <Link to="/complaint">
-                    <Button variant="secondary" size="lg" className="bg-white text-teal-600 hover:bg-gray-100">
+                    <Button variant="cta" size="lg" className="bg-white text-secondary-600 hover:bg-gray-50 shadow-lg hover:shadow-xl">
                       File a Complaint
                       <ArrowRight size={20} className="inline ml-2" />
                     </Button>
                   </Link>
                 </div>
                 <div className="flex-shrink-0">
-                  <HelpCircle size={64} className="text-white opacity-20" />
+                  <HelpCircle size={72} className="text-white opacity-20" />
                 </div>
               </div>
             </div>
