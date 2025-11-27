@@ -9,29 +9,54 @@ import {
   Shield,
   Home,
   Menu,
-  X
+  X,
+  AlertTriangle,
+  LogOut
 } from 'lucide-react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '../context/AuthContext'
+import { getUserRole } from '../utils/roleUtils'
+import Modal from './Modal'
+import Button from './Button'
 
-const Sidebar = ({ userRole = 'admin' }) => {
+const Sidebar = ({ userRole: propUserRole }) => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { logout, isAuthenticated, user } = useAuth()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   
-  const handleLogout = () => {
-    logout()
+  // Auto-detect role from auth context or localStorage for consistency
+  // Priority: prop > localStorage > user object > 'guest'
+  let detectedRole = propUserRole || getUserRole() || user?.role || 'guest'
+  
+  // Normalize user role - handle both 'officer' and 'legalOfficer'
+  // Also handle 'legal' which is the normalized form from AuthContext
+  if (detectedRole === 'legal' || detectedRole === 'legalOfficer') {
+    detectedRole = 'officer'
+  }
+  
+  const normalizedRole = detectedRole
+  
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true)
     setIsMobileOpen(false)
+  }
+  
+  const handleConfirmLogout = () => {
+    logout()
+    setShowLogoutModal(false)
     navigate('/welcome', { replace: true })
   }
   
+  const handleCancelLogout = () => {
+    setShowLogoutModal(false)
+  }
+  
   const adminNavItems = [
-    { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/cases', label: 'Cases', icon: FileText },
-    { path: '/admin/users', label: 'Users', icon: Users },
-    { path: '/admin/documents', label: 'Documents', icon: FileText },
+    { path: '/admin-dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/admin-dashboard', label: 'Cases', icon: FileText },
+    { path: '/admin-dashboard', label: 'Users', icon: Users },
+    { path: '/admin-dashboard', label: 'Documents', icon: FileText },
     { path: '/settings', label: 'Settings', icon: Settings },
   ]
 
@@ -59,20 +84,26 @@ const Sidebar = ({ userRole = 'admin' }) => {
     { path: '/settings', label: 'Settings', icon: Settings },
   ]
 
-  const navItems = userRole === 'admin' 
+  const navItems = normalizedRole === 'admin' 
     ? adminNavItems 
-    : userRole === 'officer' 
+    : normalizedRole === 'officer' 
     ? officerNavItems 
-    : userRole === 'guest'
+    : normalizedRole === 'guest'
     ? guestNavItems
-    : userRole === 'student'
+    : normalizedRole === 'student'
     ? studentNavItems
     : guestNavItems
 
   const isActive = (path) => {
-    if (path === '/admin' || path === '/officer') {
-      return location.pathname === path
+    // Exact match for specific routes
+    if (path === '/admin' || path === '/officer' || path === '/admin-dashboard') {
+      return location.pathname === path || location.pathname === '/admin'
     }
+    // Handle officer dashboard routes
+    if (path === '/officer' && location.pathname === '/legal-dashboard') {
+      return true
+    }
+    // For other routes, check if pathname starts with the path
     return location.pathname.startsWith(path)
   }
 
@@ -107,25 +138,25 @@ const Sidebar = ({ userRole = 'admin' }) => {
                 onClick={() => setIsMobileOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                   active
-                    ? 'bg-primary-500 text-white shadow-md scale-[1.02]'
-                    : 'text-primary-100 hover:bg-primary-600/50 hover:text-white hover:scale-[1.01]'
+                    ? 'bg-primary-500 text-white shadow-md'
+                    : 'text-primary-100 hover:bg-primary-600/50 hover:text-white'
                 }`}
               >
-                <Icon size={20} className="icon-hover" />
+                <Icon size={20} />
                 <span className="font-medium">{item.label}</span>
               </Link>
             )
           })}
         </nav>
         
-        {/* Logout Button - Only show for admin */}
-        {userRole === 'admin' && (
+        {/* Logout Button - Show for authenticated users (admin and officer) */}
+        {isAuthenticated && (normalizedRole === 'admin' || normalizedRole === 'officer') && (
           <div className="p-4 border-t border-primary-600">
             <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-primary-100 hover:bg-red-600/50 hover:text-white hover:scale-[1.01]"
+              onClick={handleLogoutClick}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-primary-100 hover:bg-red-600/50 hover:text-white"
             >
-              <FontAwesomeIcon icon={faRightFromBracket} className="w-5 h-5" />
+              <LogOut size={20} />
               <span className="font-medium">Logout</span>
             </button>
           </div>
@@ -139,6 +170,50 @@ const Sidebar = ({ userRole = 'admin' }) => {
           onClick={() => setIsMobileOpen(false)}
         />
       )}
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        isOpen={showLogoutModal}
+        onClose={handleCancelLogout}
+        title="Confirm Logout"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+              <AlertTriangle className="text-red-600" size={20} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-gray-700 mb-1">
+                Are you sure you want to logout?
+              </p>
+              <p className="text-xs text-gray-500">
+                You will need to login again to access your account.
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex gap-3 pt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleCancelLogout}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleConfirmLogout}
+              className="flex-1 bg-red-600 hover:bg-red-700"
+            >
+              <LogOut size={16} className="mr-2" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }

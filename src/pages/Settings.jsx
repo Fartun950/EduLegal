@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { caseService } from '../services/caseService'
+import { getUserRole } from '../utils/roleUtils'
 import Sidebar from '../components/Sidebar'
 import Header from '../components/Header'
 import Card from '../components/Card'
@@ -10,8 +11,15 @@ import { User, Lock, Bell, Globe, Trash2, FileText, AlertCircle, CheckCircle } f
 const Settings = () => {
   const { user, isAuthenticated } = useAuth()
   
-  // Determine user role and default values based on authentication
-  const userRole = user?.role || 'guest'
+  // Determine user role consistently - use localStorage role first, then user object
+  // This ensures consistency across all pages
+  let userRole = getUserRole() || user?.role || 'guest'
+  
+  // Normalize role for sidebar consistency: 'legal' or 'legalOfficer' -> 'officer'
+  if (userRole === 'legal' || userRole === 'legalOfficer') {
+    userRole = 'officer'
+  }
+  
   const userName = user?.name || (isAuthenticated ? 'User' : 'Guest')
   const userEmail = user?.email || (isAuthenticated ? 'user@edulegal.edu' : 'guest@edulegal.edu')
   
@@ -108,7 +116,7 @@ const Settings = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar userRole={userRole === 'admin' ? 'admin' : userRole === 'officer' ? 'officer' : 'guest'} />
+      <Sidebar userRole={userRole} />
       <div className="flex-1 lg:ml-64">
         <Header title="Settings" userName={userName} userRole={userRole} />
         <main className="p-6">
